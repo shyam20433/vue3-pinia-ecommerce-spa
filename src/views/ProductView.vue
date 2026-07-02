@@ -14,7 +14,6 @@ const filteredProducts=computed(()=>{
     return prod.name.toLowerCase().includes(search.value.toLowerCase())
   }
   )
-con
 })
 
 const product = useProductStore()
