@@ -3,7 +3,10 @@ import { carts } from '@/stores/carts';
 import backBtn from '@/components/backBtn.vue';
 import router from '@/router';
 import removeCrtBtn from '@/components/removeCrtBtn.vue';
+import { ref,computed } from 'vue';
 const cart = carts()
+const search = ref("")
+const sortby=ref('default')
 
 function del(index) {
   cart.delcart(index)
@@ -11,15 +14,48 @@ function del(index) {
 function back() {
   router.push('/products')
 }
+
+
+const sortedproducts=computed(()=>{
+  const product=[...filteredProducts.value]
+  if (sortby.value=="low"){
+    product.sort((a,b)=>a.price -b.price);
+  }
+  else if(sortby.value=="high"){
+    product.sort((a,b)=>b.price-a.price)
+  }
+  return product
+}
+)
+
+const filteredProducts=computed(()=>{
+  return cart.cartItems.filter(prod=>
+    prod.name.toLowerCase().includes(search.value.toLowerCase())
+
+  )
+})
+
 </script>
 
 <template>
+
+
   <div class="cart-container">
     <backBtn @back="back" />
+    <div class="search-container">
+      <h2><input type="text" v-model="search" placeholder="Search products" class="search-box" /></h2>
+      </div>
+    <div class="sort-container">
+      <select v-model="sortby" class="sort-box">
+        <option value="default">default</option>
+        <option value="low">low->high</option>
+        <option value="high">high->low</option>
+      </select>
+    </div>
 
     <!-- Added (prod, index) to access the array index for deletion -->
     <div class="products">
-      <div v-for="(prod, index) in cart.cartItems" :key="prod.id" class="card">
+      <div v-for="(prod, index) in sortedproducts" :key="prod.id" class="card">
         <div class="image">
           <img :src="prod.image" :alt="prod.name" class="product-image">
         </div>
@@ -64,6 +100,62 @@ function back() {
 </template>
 
 <style scoped>
+
+
+.sort-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.sort-box {
+  width: 220px;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 500;
+  border: 2px solid #dcdcdc;
+  border-radius: 10px;
+  background-color: #fff;
+  color: #333;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.sort-box:hover {
+  border-color: #0d6efd;
+}
+
+.sort-box:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 8px rgba(13, 110, 253, 0.3);
+}
+
+.sort-box option {
+  padding: 10px;
+}
+
+.search-container {
+  display: flex;
+  justify-content: center;
+  margin: 30px 0;
+}
+
+.search-box {
+  width: 350px;
+  padding: 12px 18px;
+  border: 2px solid #ddd;
+  border-radius: 30px;
+  font-size: 16px;
+  outline: none;
+  transition: .3s;
+}
+
+.search-box:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 8px rgba(13,110,253,.3);
+}
+
 /* Page Layout Wrapper */
 .cart-container {
   max-width: 1200px;

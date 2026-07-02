@@ -8,6 +8,19 @@ import router from '@/router'
 import { ref, computed } from 'vue'
 
 const search = ref("")
+const sortby=ref('default')
+
+const sortedproducts=computed(()=>{
+  const product=[...filteredProducts.value]
+  if (sortby.value=="low"){
+    product.sort((a,b)=>a.price -b.price);
+  }
+  else if(sortby.value=="high"){
+    product.sort((a,b)=>b.price-a.price)
+  }
+  return product
+}
+)
 
 const filteredProducts=computed(()=>{
   return product.products.filter((prod)=>{
@@ -45,12 +58,19 @@ function viewcart() {
       <div class="search-container">
       <h2><input type="text" v-model="search" placeholder="Search products" class="search-box" /></h2>
       </div>
+      <div class="sort-container">
+      <select v-model="sortby" class="sort-box">
+        <option value="default">default</option>
+        <option value="low">low to high</option>
+        <option value="high">high to low</option>
+      </select>
+    </div>
       <toCartBtn @tocart="viewcart" />
     </div>
 
     <!-- Grid Products Section -->
     <div class="products">
-      <div v-for="prod in filteredProducts" :key="prod.id" class="card">
+      <div v-for="prod in sortedproducts" :key="prod.id" class="card">
         <div class="image">
           <img :src="prod.image" :alt="prod.name" class="product-image" />
         </div>
@@ -82,6 +102,43 @@ function viewcart() {
 </template>
 
 <style scoped>
+
+
+
+
+.sort-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.sort-box {
+  width: 220px;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 500;
+  border: 2px solid #dcdcdc;
+  border-radius: 10px;
+  background-color: #fff;
+  color: #333;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.sort-box:hover {
+  border-color: #0d6efd;
+}
+
+.sort-box:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 8px rgba(13, 110, 253, 0.3);
+}
+
+.sort-box option {
+  padding: 10px;
+}
+
 /* Main Layout wrapper matching the theme */
 .store-container {
   max-width: 1200px;
