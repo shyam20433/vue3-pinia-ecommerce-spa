@@ -50,7 +50,7 @@ function editProd(index){
 }
 
 function delProd(index){
-  product.products.splice(index, 1)
+  product.delProduct(index)
   if (editIndex.value === index) {
     resetForm()
   }

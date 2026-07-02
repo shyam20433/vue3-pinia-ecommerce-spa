@@ -23,6 +23,7 @@ export const useAuthStore = defineStore("auth", {
     },
 
     logout() {
+      alert()
       this.currentUser = null;
       this.isLoggedIn = false;
     }

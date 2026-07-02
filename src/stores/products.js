@@ -49,6 +49,11 @@ export const useProductStore = defineStore('product', {
   actions: {
     addProduct(product){
       this.products.push(product)
+      alert('new Product added successfully !!')
+    },
+    delProduct(index){
+      this.products.splice(index,1)
+      alert(`product deleted successfully !!`)
     }
 
   }

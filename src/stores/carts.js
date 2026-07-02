@@ -11,7 +11,11 @@ export const carts = defineStore('cart', {
     addtocart(products) {
       this.cartItems.push(products)
       alert(`${products.name} added`)
-    }
+    },
 
+    delcart(index){
+      this.cartItems.splice(index,1)
+      alert(`product removed from the cart`)
+    }
   }
 })

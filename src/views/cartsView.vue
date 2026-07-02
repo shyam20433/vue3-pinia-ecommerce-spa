@@ -6,7 +6,7 @@ import removeCrtBtn from '@/components/removeCrtBtn.vue';
 const cart = carts()
 
 function del(index) {
-  cart.cartItems.splice(index, 1)
+  cart.delcart(index)
 }
 function back() {
   router.push('/products')
