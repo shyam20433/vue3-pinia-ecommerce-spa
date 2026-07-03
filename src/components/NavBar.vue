@@ -18,6 +18,9 @@ const auth = useAuthStore();
       <li>
         <RouterLink to="/carts">Cart</RouterLink>
       </li>
+      <li>
+        <RouterLink to="/api">Api</RouterLink>
+      </li>
 
       <li v-if="auth.isAdmin">
         <RouterLink to="/manage">Manage</RouterLink>
