@@ -6,27 +6,27 @@ import { carts } from '@/stores/carts'
 import toCartBtn from '@/components/toCartBtn.vue'
 import router from '@/router'
 import { ref, computed } from 'vue'
+import { useToast } from 'vue-toastification'
 
-const search = ref("")
-const sortby=ref('default')
+const toast = useToast()
 
-const sortedproducts=computed(()=>{
-  const product=[...filteredProducts.value]
-  if (sortby.value=="low"){
-    product.sort((a,b)=>a.price -b.price);
-  }
-  else if(sortby.value=="high"){
-    product.sort((a,b)=>b.price-a.price)
+const search = ref('')
+const sortby = ref('default')
+
+const sortedproducts = computed(() => {
+  const product = [...filteredProducts.value]
+  if (sortby.value == 'low') {
+    product.sort((a, b) => a.price - b.price)
+  } else if (sortby.value == 'high') {
+    product.sort((a, b) => b.price - a.price)
   }
   return product
-}
-)
+})
 
-const filteredProducts=computed(()=>{
-  return product.products.filter((prod)=>{
+const filteredProducts = computed(() => {
+  return product.products.filter((prod) => {
     return prod.name.toLowerCase().includes(search.value.toLowerCase())
-  }
-  )
+  })
 })
 
 const product = useProductStore()
@@ -35,7 +35,7 @@ const auth = useAuthStore()
 
 function addtocart(prod) {
   if (!auth.isLoggedIn) {
-    alert(`login to add carts !!`)
+    toast.warning(`login to add carts !!`)
   } else {
     cart.addtocart(prod)
   }
@@ -43,7 +43,7 @@ function addtocart(prod) {
 
 function viewcart() {
   if (!auth.isLoggedIn) {
-    alert(`login to view/add carts`)
+    toast.info(`login to view/add carts`)
   } else {
     router.push('/carts')
   }
@@ -56,15 +56,17 @@ function viewcart() {
     <div class="store-header">
       <h2>Product Catalog</h2>
       <div class="search-container">
-      <h2><input type="text" v-model="search" placeholder="Search products" class="search-box" /></h2>
+        <h2>
+          <input type="text" v-model="search" placeholder="Search products" class="search-box" />
+        </h2>
       </div>
       <div class="sort-container">
-      <select v-model="sortby" class="sort-box">
-        <option value="default">default</option>
-        <option value="low">low to high</option>
-        <option value="high">high to low</option>
-      </select>
-    </div>
+        <select v-model="sortby" class="sort-box">
+          <option value="default">default</option>
+          <option value="low">low to high</option>
+          <option value="high">high to low</option>
+        </select>
+      </div>
       <toCartBtn @tocart="viewcart" />
     </div>
 
@@ -102,10 +104,6 @@ function viewcart() {
 </template>
 
 <style scoped>
-
-
-
-
 .sort-container {
   display: flex;
   justify-content: center;
@@ -246,12 +244,12 @@ td {
   border-radius: 30px;
   font-size: 16px;
   outline: none;
-  transition: .3s;
+  transition: 0.3s;
 }
 
 .search-box:focus {
   border-color: #0d6efd;
-  box-shadow: 0 0 8px rgba(13,110,253,.3);
+  box-shadow: 0 0 8px rgba(13, 110, 253, 0.3);
 }
 
 .price {

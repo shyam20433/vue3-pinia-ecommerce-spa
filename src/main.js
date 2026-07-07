@@ -7,6 +7,10 @@ import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import '@mdi/font/css/materialdesignicons.css'
+import Toast from 'vue-toastification'
+import 'vue-toastification/dist/index.css'
+
+
 const vuetify = createVuetify({
   components,
   directives,
@@ -22,6 +26,7 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 app.use(vuetify)
+app.use(Toast)
 
 
 
@@ -29,6 +34,7 @@ import { carts } from './stores/carts'
 const cart=carts()
 
 cart.$subscribe((mutation,state)=>{
+  console.log(mutation)
   const key=cart.getcartkey()
   if (key){
     localStorage.setItem(key,JSON.stringify(state.cartItems))

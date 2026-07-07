@@ -6,6 +6,9 @@ import { onMounted } from 'vue'
 import { carts } from '@/stores/carts'
 import { useAuthStore } from '@/stores/auth'
 import apiAdminControlBtn from '@/components/apiAdminControlBtn.vue'
+import { useToast } from 'vue-toastification'
+
+const toast = useToast()
 
 onMounted(() => {
   get()
@@ -28,7 +31,12 @@ async function addproduct() {
     image: image.value,
   }
   await apicall.addproduct(product)
-  alert(`added !!`)
+  toast.success(`added successfully !!`)
+  get()
+}
+
+function clearForm(){
+  id.value=""
   get()
 }
 
@@ -39,7 +47,7 @@ async function updateproduct() {
     image: image.value,
   }
   await apicall.updateproduct(id.value, product)
-  alert(`updated successfully!`)
+  toast.success(`updated successfully!`)
   get()
 }
 
@@ -51,7 +59,7 @@ function editProduct(prod) {
 }
 async function deleteProduct(id) {
   await apicall.delproduct(id)
-  alert('Deleted Successfully')
+  toast.success('Deleted Successfully')
   get()
 }
 
@@ -64,13 +72,13 @@ async function fetchid() {
 }
 async function delproduct() {
   await apicall.delproduct(id.value)
-  alert(`deleted !!`)
+  toast.success(`deleted !!`)
   get()
 }
 
 function addtocart(prod) {
   if (!auth.isLoggedIn) {
-    alert(`login to add carts !!`)
+    toast.warning(`login to add carts !!`)
   } else {
     cart.addtocart(prod)
   }
@@ -120,8 +128,6 @@ function addtocart(prod) {
         </v-col>
       </v-row>
 
-
-
       <div class="d-flex justify-center flex-wrap ga-3 mt-6">
         <v-btn v-if="auth.isAdmin" color="success" variant="flat" @click="addproduct"> Add </v-btn>
 
@@ -137,7 +143,7 @@ function addtocart(prod) {
       </div>
     </v-card>
 
-   <!--  //selected product -->
+    <!--  //selected product -->
 
     <v-card
       v-if="auth.isLoggedIn && product.length !== 0"
@@ -208,8 +214,6 @@ function addtocart(prod) {
               Add To Cart
             </v-btn>
           </v-card-actions>
-
-
 
           <div v-if="auth.isAdmin" class="pa-3">
             <apiAdminControlBtn @edit="editProduct(prod)" @delete="deleteProduct(prod.id)" />

@@ -6,6 +6,9 @@ import { carts } from '@/stores/carts.js'
 import { useAuthStore } from '@/stores/auth.js'
 import productApi from '@/views/productApi.vue'
 import ordersView from '@/views/ordersView.vue'
+import { useToast } from 'vue-toastification'
+
+const toast = useToast()
 
 
 import manageProductView from '@/views/manageProductView.vue'
@@ -66,11 +69,12 @@ const router = createRouter({
 
 router.beforeEach(async(to) => {
 
+
   const cart = carts()
 
   if (to.path === "/carts" && cart.cartItems.length === 0) {
 
-    alert("Please add a items to the cart first!")
+    toast.warning("Please add a items to the cart first!")
 
     return { path: "/productapi" }
   }
@@ -78,19 +82,19 @@ router.beforeEach(async(to) => {
   const auth=useAuthStore()
   if (to.path==='/manage' && !auth.isAdmin){
     console.log(`manage checking`)
-  alert(`you arent admin !!!`)
+  toast.warning(`you arent admin !!!`)
   return {path:"/"}}
 
 
   if(to.path==="/myorders" ){
     if (!auth.currentUser) {
-      alert("Please login first!")
+      toast.info("Please login first!")
       return { path: "/" }
     }
     const orders=await apicall.getOrders()
     const myOrders=orders.filter(order=>order.user?.id===auth.currentUser.id)
     if (myOrders.length===0){
-    alert("No orders")
+    toast.warning("No orders have made so far ")
     return {path:"/productapi"}
   }}
 })

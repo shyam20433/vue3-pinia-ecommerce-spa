@@ -1,14 +1,17 @@
 <script setup>
-import { carts } from '@/stores/carts';
-import backBtn from '@/components/backBtn.vue';
-import router from '@/router';
-import removeCrtBtn from '@/components/removeCrtBtn.vue';
-import { ref,computed } from 'vue';
-import { useAuthStore } from '@/stores/auth';
-const auth=useAuthStore()
+import { carts } from '@/stores/carts'
+import backBtn from '@/components/backBtn.vue'
+import router from '@/router'
+import removeCrtBtn from '@/components/removeCrtBtn.vue'
+import { ref, computed } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+const auth = useAuthStore()
 const cart = carts()
-const search = ref("")
-const sortby=ref('default')
+const search = ref('')
+const sortby = ref('default')
+import { useToast } from 'vue-toastification'
+
+const toast = useToast()
 
 function del(index) {
   cart.delcart(index)
@@ -17,59 +20,54 @@ function back() {
   router.push('/products')
 }
 
-
-const sortedproducts=computed(()=>{
-  const product=[...filteredProducts.value]
-  if (sortby.value=="low"){
-    product.sort((a,b)=>a.price -b.price);
-  }
-  else if(sortby.value=="high"){
-    product.sort((a,b)=>b.price-a.price)
+const sortedproducts = computed(() => {
+  const product = [...filteredProducts.value]
+  if (sortby.value == 'low') {
+    product.sort((a, b) => a.price - b.price)
+  } else if (sortby.value == 'high') {
+    product.sort((a, b) => b.price - a.price)
   }
   return product
-}
-)
+})
 
-const filteredProducts=computed(()=>{
-  return cart.cartItems.filter(prod=>
-    prod.name.toLowerCase().includes(search.value.toLowerCase())
-
+const filteredProducts = computed(() => {
+  return cart.cartItems.filter((prod) =>
+    prod.name.toLowerCase().includes(search.value.toLowerCase()),
   )
 })
 
-import apicall from "@/services/server";
+import apicall from '@/services/server'
 
 async function placeOrder() {
-  if (cart.cartItems.length===0){
-    alert(`cart is empty cant place order !`)
+  if (cart.cartItems.length === 0) {
+    toast.success(`cart is empty cant place order !`)
     return
   }
   const order = {
-    userId:auth.currentUser.id,
-    user:auth.currentUser,
+    userId: auth.currentUser.id,
+    user: auth.currentUser,
     items: cart.cartItems,
     totalItems: cart.totalitems,
     totalPrice: cart.totalprice,
-    orderDate: new Date().toLocaleString()
-  };
+    orderDate: new Date().toLocaleString(),
+  }
 
-  await apicall.placeOrder(order);
+  await apicall.placeOrder(order)
 
-  alert("Order Placed Successfully");
+  toast.success('Order Placed Successfully')
 
-  cart.clearcart();
+  cart.clearcart()
 }
-
 </script>
 
 <template>
-
-
   <div class="cart-container">
     <backBtn @back="back" />
     <div class="search-container">
-      <h2><input type="text" v-model="search" placeholder="Search products" class="search-box" /></h2>
-      </div>
+      <h2>
+        <input type="text" v-model="search" placeholder="Search products" class="search-box" />
+      </h2>
+    </div>
     <div class="sort-container">
       <select v-model="sortby" class="sort-box">
         <option value="default">default</option>
@@ -82,7 +80,7 @@ async function placeOrder() {
     <div class="products">
       <div v-for="(prod, index) in sortedproducts" :key="prod.id" class="card">
         <div class="image">
-          <img :src="prod.image" :alt="prod.name" class="product-image">
+          <img :src="prod.image" :alt="prod.name" class="product-image" />
         </div>
 
         <table>
@@ -100,11 +98,13 @@ async function placeOrder() {
           </tr>
           <tr>
             <th>Product quantity</th>
-            <td class="price"><span>{{ prod.quantity }}</span></td>
+            <td class="price">
+              <span>{{ prod.quantity }}</span>
+            </td>
           </tr>
           <tr>
             <th>Total price</th>
-            <td class="price">₹{{ prod.price *prod.quantity }}</td>
+            <td class="price">₹{{ prod.price * prod.quantity }}</td>
           </tr>
 
           <tr>
@@ -113,21 +113,19 @@ async function placeOrder() {
           </tr>
           <tr>
             <td colspan="2" class="action-cell">
-              <removeCrtBtn @delete="del(index)"/>
+              <removeCrtBtn @delete="del(index)" />
             </td>
           </tr>
         </table>
       </div>
       <h3>total amount : ₹ {{ cart.totalprice }}</h3>
       <h3>total quantity : {{ cart.totalitems }}</h3>
-      <button @click="placeOrder" v-if="cart.cartItems.length>=1">Place Order</button>
+      <button @click="placeOrder" v-if="cart.cartItems.length >= 1">Place Order</button>
     </div>
   </div>
 </template>
 
 <style scoped>
-
-
 .sort-container {
   display: flex;
   justify-content: center;
@@ -174,12 +172,12 @@ async function placeOrder() {
   border-radius: 30px;
   font-size: 16px;
   outline: none;
-  transition: .3s;
+  transition: 0.3s;
 }
 
 .search-box:focus {
   border-color: #0d6efd;
-  box-shadow: 0 0 8px rgba(13,110,253,.3);
+  box-shadow: 0 0 8px rgba(13, 110, 253, 0.3);
 }
 
 /* Page Layout Wrapper */
@@ -187,7 +185,10 @@ async function placeOrder() {
   max-width: 1200px;
   margin: 0 auto;
   padding: 24px;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
 
 /* Grid Layout for Cards */
@@ -204,8 +205,12 @@ async function placeOrder() {
   border: 1px solid #e2e8f0;
   border-radius: 12px;
   padding: 16px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
   display: flex;
   flex-direction: column;
 }
@@ -237,7 +242,8 @@ table {
   border-collapse: collapse;
 }
 
-th, td {
+th,
+td {
   padding: 8px 0;
   font-size: 14px;
   text-align: left;

@@ -1,11 +1,14 @@
 <script setup>
-import { useAuthStore } from '@/stores/auth';
-import { ref } from 'vue';
-import apicall from '@/services/server';
+import { useAuthStore } from '@/stores/auth'
+import { ref } from 'vue'
+import apicall from '@/services/server'
+import { useToast } from 'vue-toastification'
 
+const toast = useToast()
 
 const auth = useAuthStore()
 const name = ref('')
+
 /*
 function addadmin(adminValue) {
   auth.login({
@@ -21,10 +24,9 @@ function adduser(userValue) {
   })
 } */
 
-async function adduser(){
-
-  if(!name.value.trim()){
-    alert("Enter username")
+async function adduser() {
+  if (!name.value.trim()) {
+    toast.info('Enter username')
     return
   }
 
@@ -32,57 +34,47 @@ async function adduser(){
 
   const exists = users[0]
 
-  if(exists){
-
+  if (exists) {
     auth.login(exists)
 
-    alert("Logged in successfully")
-
-  }else{
-
+    toast.success('Logged in successfully')
+  } else {
     const newUser = {
-      username:name.value,
-      role:"user"
+      username: name.value,
+      role: 'user',
     }
 
     await apicall.adduser(newUser)
 
     auth.login(newUser)
 
-    alert("Signup Successfully")
+    toast.success('Signup Successfully')
   }
-
 }
-async function addadmin(){
-
-  if(!name.value.trim()){
-    alert("Enter username")
+async function addadmin() {
+  if (!name.value.trim()) {
+    toast('Enter username')
     return
   }
 
   const users = await apicall.getUserByName(name.value)
 
-  const exists = users.find(user => user.role==="admin")
+  const exists = users.find((user) => user.role === 'admin')
 
-  if(exists){
+  if (exists) {
+    auth.login(exists)
 
-      auth.login(exists)
-
-      alert("Admin Logged In")
-
-  }else{
-
-      alert("Admin not found")
-
+    toast.success('Admin Logged In')
+  } else {
+    toast.warning('Admin not found')
   }
-
 }
 </script>
 
 <template>
   <div class="login-card">
     <label for="username">enter your name</label>
-    <input id="username" type="text" v-model="name" placeholder="John Doe" required>
+    <input id="username" type="text" v-model="name" placeholder="John Doe" required />
 
     <label>select your role</label>
     <div class="button-group">
@@ -100,7 +92,10 @@ async function addadmin(){
   gap: 12px;
   max-width: 340px;
   margin: 60px auto;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
   padding: 28px;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
@@ -124,7 +119,9 @@ input {
   border-radius: 6px;
   font-size: 15px;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 input:focus {
@@ -149,7 +146,9 @@ button {
   font-weight: 600;
   cursor: pointer;
   text-transform: capitalize;
-  transition: opacity 0.2s, transform 0.1s;
+  transition:
+    opacity 0.2s,
+    transform 0.1s;
 }
 
 button:active {

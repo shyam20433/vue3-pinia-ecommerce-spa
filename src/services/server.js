@@ -4,6 +4,27 @@ const api = axios.create({
   baseURL: 'http://localhost:8080'
 }
 )
+api.interceptors.request.use((config)=>{
+  console.log("------request interceptor------")
+  console.log("method : ",config.method)
+  console.log("Url : ",config.url)
+
+  return config
+},(error)=>{
+  return Promise.reject(error)
+}
+)
+
+api.interceptors.response.use((response)=>{
+  console.log("------response interceptor------")
+  console.log("Status : ",response.status)
+  //console.log("Url : ",response.url)
+
+  return response
+},(error)=>{
+  return Promise.reject(error)
+}
+)
 
 const apicall = {
   async getproducts() {

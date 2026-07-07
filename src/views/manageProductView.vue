@@ -1,39 +1,39 @@
 <script setup>
 import { useProductStore } from '@/stores/products'
-import backBtn from '@/components/backBtn.vue';
-import router from '@/router';
-import adminControlBtn from '@/components/adminControlBtn.vue';
-import { ref } from 'vue';
+import backBtn from '@/components/backBtn.vue'
+import router from '@/router'
+import adminControlBtn from '@/components/adminControlBtn.vue'
+import { ref } from 'vue'
 
 const product = useProductStore()
 
-const id = ref("")
-const name = ref("")
-const price = ref("")
-const image = ref("")
+const id = ref('')
+const name = ref('')
+const price = ref('')
+const image = ref('')
 const editIndex = ref(-1)
 
-function back(){
+function back() {
   router.push('/products')
 }
 
 function resetForm() {
-  id.value = ""
-  name.value = ""
-  price.value = ""
-  image.value = ""
+  id.value = ''
+  name.value = ''
+  price.value = ''
+  image.value = ''
   editIndex.value = -1
 }
 
-function addProd(){
+function addProd() {
   const prod = {
     id: Number(id.value),
     name: name.value,
     price: Number(price.value),
-    image: image.value
+    image: image.value,
   }
 
-  if (editIndex.value === -1){
+  if (editIndex.value === -1) {
     product.addProduct(prod)
   } else {
     product.products.splice(editIndex.value, 1, prod)
@@ -41,7 +41,7 @@ function addProd(){
   resetForm()
 }
 
-function editProd(index){
+function editProd(index) {
   editIndex.value = index
   id.value = product.products[editIndex.value].id
   name.value = product.products[editIndex.value].name
@@ -49,14 +49,14 @@ function editProd(index){
   price.value = product.products[editIndex.value].price
 }
 
-function delProd(index){
+function delProd(index) {
   product.delProduct(index)
   if (editIndex.value === index) {
     resetForm()
   }
 }
 
-function clear(){
+function clear() {
   product.products = []
   resetForm()
 }
@@ -101,7 +101,7 @@ function clear(){
     <div class="products">
       <div v-for="(prod, index) in product.products" :key="prod.id" class="card">
         <div class="image">
-          <img :src="prod.image" :alt="prod.name" class="product-image">
+          <img :src="prod.image" :alt="prod.name" class="product-image" />
         </div>
 
         <table>
@@ -120,7 +120,7 @@ function clear(){
             </tr>
             <tr>
               <td colspan="2" class="action-cell">
-                <adminControlBtn @edit="editProd(index)" @delete="delProd(index)"/>
+                <adminControlBtn @edit="editProd(index)" @delete="delProd(index)" />
               </td>
             </tr>
           </tbody>
@@ -136,7 +136,10 @@ function clear(){
   max-width: 1200px;
   margin: 0 auto;
   padding: 24px;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
 
 /* Polished Management Form Card */
@@ -175,7 +178,9 @@ function clear(){
   border-radius: 6px;
   font-size: 14px;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 .form-group input:focus {
@@ -190,7 +195,8 @@ function clear(){
   margin-top: 20px;
 }
 
-.btn-submit, .btn-clear {
+.btn-submit,
+.btn-clear {
   flex: 1;
   padding: 11px;
   border: none;
@@ -211,7 +217,8 @@ function clear(){
   color: white;
 }
 
-.btn-submit:hover, .btn-clear:hover {
+.btn-submit:hover,
+.btn-clear:hover {
   opacity: 0.9;
 }
 
@@ -229,7 +236,9 @@ function clear(){
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
   display: flex;
   flex-direction: column;
 }
@@ -261,7 +270,8 @@ table {
   border-collapse: collapse;
 }
 
-th, td {
+th,
+td {
   padding: 8px 0;
   font-size: 14px;
   text-align: left;

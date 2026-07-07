@@ -21,7 +21,7 @@ export const useAuthStore = defineStore("auth", {
       localStorage.setItem("currentUser", JSON.stringify(this.currentUser))
 
       localStorage.setItem("isLoggedIn", JSON.stringify(this.isLoggedIn))
-      const cart=carts()
+      const cart = carts()
       cart.loadcart()
 
     },
