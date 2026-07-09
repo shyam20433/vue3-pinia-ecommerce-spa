@@ -80,7 +80,7 @@ router.beforeEach(async(to) => {
   }
 
   const auth=useAuthStore()
-  if (to.path==='/manage' && !auth.isAdmin){
+  if ((to.path==='/manage' || to.path==='/orders' ) && !auth.isAdmin){
     console.log(`manage checking`)
   toast.warning(`you arent admin !!!`)
   return {path:"/"}}
