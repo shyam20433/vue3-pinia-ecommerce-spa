@@ -87,19 +87,33 @@ function clearForm() {
   id.value = ''
   get()
 }
-
+const version = ref(null)
 async function updateproduct() {
+
   const product = {
+    version:version.value,
     name: name.value,
     price: price.value,
     image: image.value,
   }
+  try{
   await apicall.updateproduct(id.value, product)
   toast.success(`updated successfully!`)
   get()
+  return
+}catch(error){
+  if (error.response.status===409){
+    toast.warning("this product is updating by other admin !!!")
+  }
+  await get()
+  return
+}
+
+
 }
 
 function editProduct(prod) {
+  version.value=prod.version
   id.value = prod.id
   name.value = prod.name
   price.value = prod.price
