@@ -16,6 +16,28 @@ onMounted(() => {
 })
 
 
+const deleteDialog=ref(false)
+const deleteorderId=ref(null)
+
+function cancelDelete(){
+  deleteDialog.value=false
+  deleteorderId.value=null
+
+}
+
+function confirmOrder(id){
+  deleteDialog.value=true
+  deleteorderId.value=id
+  confirmDelete()
+}
+
+
+async function confirmDelete(){
+  await deleteOrder(deleteorderId.value)
+  cancelDelete()
+}
+
+
 
 async function deleteOrder(id) {
   try {
@@ -54,7 +76,17 @@ async function updateStatus(order) {
     <div class="order-card" v-for="order in orders" :key="order.id">
       <h2>Order :{{ order.id }}</h2>
       <h2>username :{{ order.user.username }}</h2>
-      <adminOrdersBtn @remove="deleteOrder(order.id)" @shipped="shipped(order.id)" />
+      <adminOrdersBtn @click="deleteDialog=true" @shipped="shipped(order.id)" />
+      <v-dialog v-model="deleteDialog" max-width="450">
+                <v-card rounded="xl">
+                  <v-card-title>delete Order </v-card-title>
+                  <v-card-text>are you sure Do you want to remove this Order ?</v-card-text>
+                  <v-card-actions class="justify-center">
+                    <v-btn color="primary" variant="flat" @click="deleteDialog=false">No</v-btn>
+                    <v-btn color="secondary" variant="flat" @click="confirmOrder(order.id)">yes</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
       <v-select
   v-model="order.status"
   :items="[
@@ -94,7 +126,7 @@ async function updateStatus(order) {
       <div>
         <h2>Contact details</h2>
         <h4>Phone Number :{{ order.user.phone }}</h4>
-        <h4>Address :{{ order.user.phone }}</h4>
+        <h4>Address :{{ order.user.address }}</h4>
       </div>
 
     </div>
