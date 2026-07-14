@@ -2,6 +2,8 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Product from 'App/Models/Product'
 import StoreProductValidator from 'App/Validators/StoreProductValidator'
 import UpdateProductValidator from 'App/Validators/UpdateProductValidator'
+
+import Redis from '@ioc:Adonis/Addons/Redis'
 export default class ProductsController {
   public async index({ request, response }: HttpContextContract) {
     try {
@@ -18,9 +20,18 @@ export default class ProductsController {
 
       if (search) {
         query.whereILike('name', `%${search}%`)
+        return await query.orderBy('id','asc')
+      }
+      const cacheProducts=await Redis.get('all_products')
+      if(cacheProducts){
+        console.log(`serving from Redis cache !!`)
+        return JSON.parse(cacheProducts)
       }
 
-      return await query.orderBy('id', 'asc')
+      console.log(`Serving from Database & Saving to cache !!`)
+      const products=await Product.query().orderBy('id','asc')
+      await Redis.setex('all_products',1800,JSON.stringify(products))
+      return products
     } catch (error) {
       console.error('index error:', error)
       return response.internalServerError({
