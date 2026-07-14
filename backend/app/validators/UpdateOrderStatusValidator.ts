@@ -1,7 +1,7 @@
 import { schema, CustomMessages } from '@ioc:Adonis/Core/Validator'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
-export default class StoreProductValidator {
+export default class UpdateOrderStatusValidator {
   constructor(protected ctx: HttpContextContract) {}
 
   /*
@@ -23,7 +23,13 @@ export default class StoreProductValidator {
    *     ])
    *    ```
    */
-  public schema = schema.create({})
+  public schema = schema.create({
+    status:schema.string([
+      rules.enum(['Shipped',
+        'Out for Delivery',
+        'Delivered'] as const )
+    ])
+  })
 
   /**
    * Custom messages for validation failures. You can make use of dot notation `(.)`
@@ -36,5 +42,8 @@ export default class StoreProductValidator {
    * }
    *
    */
-  public messages: CustomMessages = {}
+public messages: CustomMessages = {
+    'status.required': 'An order status is required.',
+    'status.enum': 'Invalid status. It must be pending, processing, shipped, delivered, or cancelled.'
+  }
 }

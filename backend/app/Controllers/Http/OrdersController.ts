@@ -1,7 +1,8 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Order from 'App/Models/Order'
 import { DateTime } from 'luxon'
-
+import UpdateOrderStatusValidator from 'App/Validators/UpdateOrderStatusValidator'
+import StoreOrderValidator from 'App/Validators/StoreOrderValidator'
 export default class OrdersController {
 
   public async index({ response }: HttpContextContract) {
@@ -25,8 +26,8 @@ export default class OrdersController {
           message: 'Order not found',
         })
       }
-
-      const status = request.input('status')
+      const data=await request.validate(UpdateOrderStatusValidator)
+      const status = data.status
       order.status = status
       await order.save()
 
@@ -43,12 +44,13 @@ export default class OrdersController {
   }
 
   public async store({ request, response }: HttpContextContract) {
+    const data = await request.validate(StoreOrderValidator)
     try {
       const order = await Order.create({
-        userId: request.input('userId'),
-        items: request.input('items'),
-        totalItems: request.input('totalItems'),
-        totalPrice: request.input('totalPrice'),
+        userId: data.userId,
+        items:data.items,
+        totalItems: data.totalItems,
+        totalPrice: data.totalPrice,
         orderDate: DateTime.now(),
       })
 

@@ -1,6 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Product from 'App/Models/Product'
-
+import StoreProductValidator from 'App/Validators/StoreProductValidator'
+import UpdateProductValidator from 'App/Validators/UpdateProductValidator'
 export default class ProductsController {
   public async index({ request, response }: HttpContextContract) {
     try {
@@ -49,8 +50,9 @@ export default class ProductsController {
 
   public async store({ request, response }: HttpContextContract) {
     try {
+      const data=await request.validate(ProductValidator)
       const product = await Product.create(
-        request.only(['name', 'price', 'image'])
+        data
       )
 
       return response.created(product)
@@ -64,7 +66,7 @@ export default class ProductsController {
 
   public async update({ params, request, response }: HttpContextContract) {
     try {
-      const product = await Product.find(params.id)
+      const product = await Product.find(params.id).validate(UpdateProductValidator)
 
       if (!product) {
         return response.notFound({

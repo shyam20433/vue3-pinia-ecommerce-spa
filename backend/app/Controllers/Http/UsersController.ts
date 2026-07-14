@@ -2,7 +2,9 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import User from 'App/Models/User'
 import Hash from '@ioc:Adonis/Core/Hash'
 export default class UsersController {
-
+import AdminLoginValidator from 'App/Validators/AdminLoginValidator'
+import UpdateUserValidator from 'App/Validators/UpdateUserValidator'
+import StoreUserValidator from 'App/Validators/StoreUserValidator'
   public async index({ request, response }: HttpContextContract) {
     try {
       const username = request.input('username')
@@ -33,13 +35,9 @@ export default class UsersController {
           message: 'User not found',
         })
       }
-
+      const data=await request.validate(UpdateUserValidator)
       user.merge(
-        request.only([
-          'username',
-          'phone',
-          'address',
-        ])
+        data
       )
 
       await user.save()
@@ -59,12 +57,9 @@ export default class UsersController {
   }: HttpContextContract) {
     try {
 
-      const { username, password } = request.only([
-        'username',
-        'password',
-      ])
+      const data=await request.validate(AdminLoginValidator)
 
-      const user = await User.findBy('username', username)
+      const user = await User.findBy('username', data.username)
 
       if (!user) {
         return response.unauthorized({
@@ -126,8 +121,9 @@ export default class UsersController {
 
   public async store({ request, response }: HttpContextContract) {
     try {
+      const data=await request.validate(StoreUserValidator)
       const user = await User.create(
-        request.only(['username', 'role', 'password'])
+        data
       )
 
       return response.created(user)
